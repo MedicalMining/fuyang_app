@@ -13,7 +13,7 @@ function conn_db($servername, $username, $password){
 function conn_db_default() {
 	//$conn = oci_connect("fuyang", "123456", 'ORCL'); // 默认建立本地连接
 	//$conn = oci_connect("fuyang", "123456", '(DEscriptION=(ADDRESS=(PROTOCOL =TCP)(HOST=127.0.0.1)(PORT = 1521))(CONNECT_DATA =(SID=ORCL)))'); // 可建立远程连接
-	$conn = conn_db('127.0.0.1', "fuyang", "123456"); // 可建立远程连接
+	$conn = conn_db('120.26.192.83', "fuyang", "123456"); // 可建立远程连接
 	if (!$conn) {
 		$e = oci_error();
 		print htmlentities($e['message']);
