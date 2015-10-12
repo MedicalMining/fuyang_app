@@ -9,10 +9,6 @@
 
 <style>
 
-.background {
-  fill: #FF534B;
-}
-
 td {text-align:center;font-size:100%;font-family: Helvetica; }
 
 </style>
@@ -20,18 +16,47 @@ td {text-align:center;font-size:100%;font-family: Helvetica; }
 <body>
     <strong><H3>
     <IMG SRC="png/c-3.png" class=img-rounded 
-  align=center ALT="error" height=1% border=0%>
+  align=center ALT="error" height=2% border=0%>
     费用去向</H3></strong><br><br>
 
-<script src="d3.js"></script>
+    
+<?php   
+    error_reporting(E_ALL ^ E_NOTICE);
+    session_start();
+    $array = array();
+    $array = $_SESSION['payBl'];
+    $array40 = $array[4][0];
+    $array41 = $array[4][1];
+?>
+
+<script src="js/d3.js"></script>
 
 <script>
 
-var total = 1055.60;//总支出
+function accSub(arg1, arg2) {
+     var r1, r2, m, n;
+     try {
+         r1 = arg1.toString().split(".")[1].length;
+     }
+     catch (e) {
+         r1 = 0;
+     }
+     try {
+         r2 = arg2.toString().split(".")[1].length;
+     }
+     catch (e) {
+         r2 = 0;
+     }
+     m = Math.pow(10, Math.max(r1, r2)); //last modify by deeka //动态控制精度长度
+     n = (r1 >= r2) ? r1 : r2;
+     return ((arg1 * m - arg2 * m) / m).toFixed(n);
+}
 
-var hos1 = 819.70;//社区医院
+var com_hos = <?php echo $array40; ?>;//社区医院
 
-var hos2 = 235.90;//三甲医院
+var ind = <?php echo $array41; ?>;//个人支出
+
+var med = accSub(com_hos, ind);//医疗支出
 
 var device_width = document.body.clientWidth;
 var device_height = document.documentElement.clientHeight;
@@ -39,7 +64,7 @@ var device_height = document.documentElement.clientHeight;
 
 var min;
 
-var width = 0.8*device_width,
+var width = 0.9*device_width,
     height = 0.6*device_height,
     twoPi = 2 * Math.PI,
     format = d3.format("0.2f"),
@@ -50,83 +75,73 @@ if(width >= height)
 else
     min = width;
 
-
-var arc = d3.svg.arc()
-    .startAngle(0)
-    .innerRadius(min*0.3)
-    .outerRadius(min*0.35);
-
-var arc2 = d3.svg.arc()
-    .startAngle(0)
-    .innerRadius(min*0.3)
-    .outerRadius(min*0.35);
-
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
   .append("g")
-    .attr("transform", "translate(" + device_width / 2 + "," + min * 0.4+")");
+    .attr("transform", "translate(" + (device_width / 2 - 10) + "," + min * 0.45+")");//设置画布
 
-var circle = svg.append("circle")
+var arc = d3.svg.arc()
+    .startAngle(0)
+    .innerRadius(min*0.35)
+    .outerRadius(min*0.45);//医疗支付对应的圆弧
+
+var circle0 = svg.append("circle")
     .attr("cx",0)
     .attr("cy",0)
-    .attr("r",min*0.3)
-    .style("fill","#BACDDE");
+    .attr("r",min*0.45)
+    .style("fill","#3EA2FF");//蓝色大圆盘
+
+var circle1 = svg.append("circle")
+    .attr("cx",0)
+    .attr("cy",0)
+    .attr("r",min*0.35)
+    .style("fill","#BACDDE");//灰色中圆盘
     
 var circle2 = svg.append("circle")
     .attr("cx",0)
     .attr("cy",0)
-    .attr("r",min*0.28)
-    .style("fill","#FFF5D4");
+    .attr("r",min*0.3)
+    .style("fill","#FFF5D4");//黄色小圆盘
 
-var meter = svg.append("g")
-    .attr("class", "progress-meter");
-
-meter.append("path")
+var meter = svg.append("path")
     .attr("class", "background")
-    .style("fill", "#3EA2FF")
-    .attr("d", arc.endAngle(hos1/total*twoPi));
+    .style("fill", "#FF534B")
+    .attr("d", arc.endAngle(med/com_hos*twoPi));//医疗支付的圆弧显示
 
-
-var meter2 = svg.append("g")
-    .attr("class", "progress-meter");
-
-meter2.append("path")
-    .attr("class", "background")
-    .attr("d", arc2.endAngle(hos2/total*twoPi-twoPi));
-
-var text = meter.append("text")
+var text = svg.append("text")
     .attr("text-anchor", "middle")
     .attr("dy", ".35em")
-    .style("font-size", "200%")
+    .style("font-size", "120%")
     .style("font-family", "Helvetica")
     .attr("transform", "translate(0," + -40*device_height/800 + ")");
 
-var text2 = meter.append("text")
+var text2 = svg.append("text")
     .attr("text-anchor", "middle")
     .attr("dy", ".35em")
-    .style("font-size", "200%")
+    .style("font-size", "120%")
     .style("font-family", "Helvetica")
     .attr("transform", "translate(0," + 40*device_height/800 + ")");
 
-text.text("共支出");
-text2.text(format(total));
+text.text("社区医院支出");
+text2.text(format(com_hos));
 
 </script>
 <hr>
 <table width="95%" align=center>
-<tr><td><a href='2014.php'><img src='png/left-2.png'></a></td>
+<tr><td><a href="2014.php"><img src='png/left-2.png' height = 50%></a></td>
 <td>2015年</td>
-<td><img src='png/right-1.png'></td></tr></table>
+<td><img src='png/right-1.png' height = 50%></td></tr></table>
 <hr>
+
 <table width="95%" align=center>
-<tr><td  width = "10%">1</td><td width = "20%"><img src='png/heart-1.png'></td>
-<td  width = "20%"><script>document.write(percentFormat(hos1/total));</script></td>
-<td  width = "25%"><a href = 'hos1.php?year=2015' style="text-decoration: none;">社区医院</a></td>
-<td  width = "25%"><script>document.write(hos1);</script></td></tr>
-<tr><td>2</td><td><img src='png/heart-1.png'></td>
-<td><script>document.write(percentFormat(hos2/total));</script></td>
-<td><a href = 'hos2.php?year=2015' style="text-decoration: none;">三甲医院</a></td><td><script>document.write(hos2);</script></td></tr>
+<tr><td  width = "10%">1</td><td width = "20%"><img src='png/heart-1.png' height = 50%></td>
+<td  width = "20%"><script>document.write(percentFormat(med/com_hos));</script></td>
+<td  width = "25%">医疗支付</td>
+<td  width = "25%"><script>document.write(format(med));</script></td></tr>
+<tr><td>2</td><td><img src='png/user.png' height = 50%></td>
+<td><script>document.write(percentFormat(ind/com_hos));</script></td>
+<td>个人自付</td><td><script>document.write(format(ind));</script></td></tr>
 </table>
 
 </body>

@@ -1,10 +1,10 @@
 <html>
 <head>
-    <title>费用去向</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-    <meta http-equiv="Content-Language" content="zh"/>
+	<title>费用去向</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+	<meta http-equiv="Content-Language" content="zh"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel=stylesheet href="bootstrap.css" type="text/css">
+	<link rel=stylesheet href="bootstrap.css" type="text/css">
 </head>
 
 <style>
@@ -14,19 +14,10 @@ td {text-align:center;font-size:100%;font-family: Helvetica; }
 </style>
 
 <body>
-    <strong><H3>
-    <IMG SRC="png/c-3.png" class=img-rounded 
+	<strong><H3>
+	<IMG SRC="png/c-3.png" class=img-rounded 
   align=center ALT="error" height=2% border=0%>
-  费用去向</H3></strong><br><br>
-
-<?php   
-    error_reporting(E_ALL ^ E_NOTICE);
-    session_start();
-    $array = array();
-    $array = $_SESSION['payBl'];
-    $array10 = $array[1][0];
-    $array11 = $array[1][1];
-?>
+	费用去向</H3></strong><br><br>
 
 <script src="js/d3.js"></script>
 
@@ -54,9 +45,9 @@ function accSub(arg1, arg2) {
 
 
 
-var com_hos = <?php echo $array10; ?>;//社区医院
+var com_hos = 1000;//社区医院
 
-var ind = <?php echo $array11; ?>;//个人支出
+var ind = 800;//个人支出
 
 var med = accSub(com_hos, ind);//医疗支出
 
@@ -78,48 +69,64 @@ else
     min = width;
 
 
+var arc = d3.svg.arc()
+    .startAngle(0)
+    .innerRadius(min*0.35)
+    .outerRadius(min*0.45);
+/*
+var arc2 = d3.svg.arc()
+    .startAngle(0)
+    .innerRadius(min*0.35)
+    .outerRadius(min*0.45);
+*/
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
   .append("g")
-    .attr("transform", "translate(" + (device_width / 2 - 10) + "," + min * 0.45+")");//设置画布
-
-var arc = d3.svg.arc()
-    .startAngle(0)
-    .innerRadius(min*0.35)
-    .outerRadius(min*0.45);//医疗支付对应的圆弧
+    .attr("transform", "translate(" + (device_width / 2 - 10) + "," + min * 0.45+")");
 
 var circle0 = svg.append("circle")
     .attr("cx",0)
     .attr("cy",0)
     .attr("r",min*0.45)
-    .style("fill","#3EA2FF");//蓝色大圆盘
+    .style("fill","#3EA2FF");
 
 var circle1 = svg.append("circle")
     .attr("cx",0)
     .attr("cy",0)
     .attr("r",min*0.35)
-    .style("fill","#BACDDE");//灰色中圆盘
+    .style("fill","#BACDDE");
     
 var circle2 = svg.append("circle")
     .attr("cx",0)
     .attr("cy",0)
     .attr("r",min*0.3)
-    .style("fill","#FFF5D4");//黄色小圆盘
+    .style("fill","#FFF5D4");
 
-var meter = svg.append("path")
+var meter = svg.append("g")
+    .attr("class", "progress-meter");
+
+meter.append("path")
     .attr("class", "background")
     .style("fill", "#FF534B")
-    .attr("d", arc.endAngle(med/com_hos*twoPi));//医疗支付的圆弧显示
+    .attr("d", arc.endAngle(med/com_hos*twoPi));
+/*
 
-var text = svg.append("text")
+var meter2 = svg.append("g")
+    .attr("class", "progress-meter");
+
+meter2.append("path")
+    .attr("class", "background")
+    .attr("d", arc2.endAngle(ind/com_hos*twoPi));
+*/
+var text = meter.append("text")
     .attr("text-anchor", "middle")
     .attr("dy", ".35em")
     .style("font-size", "120%")
     .style("font-family", "Helvetica")
     .attr("transform", "translate(0," + -40*device_height/800 + ")");
 
-var text2 = svg.append("text")
+var text2 = meter.append("text")
     .attr("text-anchor", "middle")
     .attr("dy", ".35em")
     .style("font-size", "120%")
@@ -132,9 +139,9 @@ text2.text(format(com_hos));
 </script>
 <hr>
 <table width="95%" align=center>
-<tr><td><a href="2011.php"><img src='png/left-2.png' height = 50%></a></td>
-<td>2012年</td>
-<td><a href="2013.php"><img src='png/right-2.png' height = 50%></a></td></tr></table>
+<tr><td><img src='png/left-1.png' height = 50%></td>
+<td>2011年</td>
+<td><a href="2012.php"><img src='png/right-2.png' height = 50%></a></td></tr></table>
 <hr>
 
 <table width="95%" align=center>
